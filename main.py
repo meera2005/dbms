@@ -242,4 +242,14 @@ def faculty():
     return render_template('faculty.html',query=query)
 
 
-app.run(debug=True)    
+@app.route('/faculty_details',methods=['POST','GET'])
+def faculty_details():
+    if request.method=="POST":
+        id=request.form.get('id')
+        name=request.form.get('name')
+        subject=request.form.get('subject')
+        query=db.engine.execute(f"INSERT INTO `faculty` (`id`,`name`,`subject`) VALUES ('{id}','{name}','{subject}')")
+    return render_template('faculty_details.html')
+if __name__=="__main__":
+    app.run()
+
