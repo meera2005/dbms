@@ -9,7 +9,7 @@ import json
 # MY db connection
 local_server= True  
 app = Flask(__name__)
-app.secret_key='kusumachandashwini'
+app.secret_key='dbms@aaahmnp'
 
 
 # this is for getting unique user access
@@ -71,19 +71,24 @@ class Student(db.Model):
 
 class Faculty(db.Model):
     id=db.Column(db.Integer,primary_key=True) 
-    fid=db.Column(db.String(50))
     fname=db.Column(db.String(50))
-    subject=db.Column(db.String(50))
-    gender=db.Column(db.String(50))
-    branch=db.Column(db.String(50))
-    email=db.Column(db.String(50))
-    number=db.Column(db.String(12))
-    address=db.Column(db.String(100))
     
+
+class Subject(db.Model):
+    subid=db.Column(db.Integer,primary_key=True)
+    subname=db.Column(db.String(50))
+    facid=db.Column(db.Integer)
+    
+
 
 @app.route('/')
 def index(): 
     return render_template('index.html')
+
+
+@app.route('/about')
+def about(): 
+    return render_template('about.html')
 
 @app.route('/studentdetails')
 def studentdetails():
@@ -101,6 +106,7 @@ def triggers():
     return render_template('triggers.html',query=query)
 
 @app.route('/department',methods=['POST','GET'])
+@login_required
 def department():
     if request.method=="POST":
         dept=request.form.get('dept')
@@ -111,7 +117,7 @@ def department():
         dep=Department(branch=dept)
         db.session.add(dep)
         db.session.commit()
-        flash("Department Addes","success")
+        flash("Department Added","success")
     return render_template('department.html')
 
 @app.route('/addattendance',methods=['POST','GET'])
@@ -147,6 +153,14 @@ def delete(id):
     return redirect('/studentdetails')
 
 
+@app.route("/deletefac/<string:id>",methods=['POST','GET'])
+@login_required
+def deletefac(id):
+    db.engine.execute(f"DELETE FROM `faculty` WHERE `faculty`.`id`={id}")
+    flash("Slot Deleted Successful","danger")
+    return redirect('/faculty_details')
+
+
 @app.route("/edit/<string:id>",methods=['POST','GET'])
 @login_required
 def edit(id):
@@ -167,6 +181,19 @@ def edit(id):
     
     return render_template('edit.html',posts=posts,dept=dept)
 
+
+
+@app.route("/editfac/<string:id>",methods=['POST','GET'])
+@login_required
+def editfac(id):
+    posts=Faculty.query.filter_by(id=id).first()
+    if request.method=="POST":
+        id=request.form.get('id')
+        fname=request.form.get('fname')
+        query=db.engine.execute(f"UPDATE `faculty` SET `fname`='{fname}' where `id`={id} ")
+        flash("Slot is Updated","success")
+        return redirect('/faculty_details')
+    return render_template('editfac.html',posts=posts)
 
 @app.route('/signup',methods=['POST','GET'])
 def signup():
@@ -233,11 +260,7 @@ def addstudent():
         num=request.form.get('num')
         address=request.form.get('address')
         query=db.engine.execute(f"INSERT INTO `student` (`rollno`,`sname`,`sem`,`gender`,`branch`,`email`,`number`,`address`) VALUES ('{rollno}','{sname}','{sem}','{gender}','{branch}','{email}','{num}','{address}')")
-    
-
         flash("Booking Confirmed","info")
-
-
     return render_template('student.html',dept=dept)
 
 @app.route('/test')
@@ -253,21 +276,24 @@ def test():
 def addfaculty():
     dept=db.engine.execute("SELECT * FROM `department`")
     if request.method=="POST":
-        fid=request.form.get('fid')
+        id=request.form.get('id')
         fname=request.form.get('fname')
-        subject=request.form.get('subject')
-        gender=request.form.get('gender')
-        branch=request.form.get('branch')
-        email=request.form.get('email')
-        num=request.form.get('num')
-        address=request.form.get('address')
-        query=db.engine.execute(f"INSERT INTO `faculty` (`fid`,`fname`,`subject`,`gender`,`branch`,`email`,`number`,`address`) VALUES ('{fid}','{fname}','{subject}','{gender}','{branch}','{email}','{num}','{address}')")
-    
-
+        query=db.engine.execute(f"INSERT INTO `faculty` (`id`,`fname`) VALUES ('{id}','{fname}')")
         flash("Booking Confirmed","info")
-
-
     return render_template('faculty.html',dept=dept)
+
+
+@app.route('/addsubject',methods=['POST','GET'])
+@login_required
+def addsubject():
+    dept=db.engine.execute("SELECT * FROM `faculty`")
+    if request.method=="POST":
+        subid=request.form.get('subid')
+        subname=request.form.get('subname')
+        facid=request.form.get('facid')
+        query=db.engine.execute(f"INSERT INTO `subject` (`subid`,`subname`,`facid`) VALUES ('{subid}','{subname}','{facid}')")
+        flash("Booking Confirmed","info")
+    return render_template('subject.html',dept=dept)
 
 
 app.run(debug=True)    

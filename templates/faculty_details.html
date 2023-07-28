@@ -1,4 +1,4 @@
-<!--{% extends 'base.html' %}-->
+{% extends 'base.html' %}
 {% block title %}
 Faculty Details
 {% endblock title %}
@@ -26,17 +26,11 @@ Faculty Details
 <table class="table">
   <thead class="thead-light">
     <tr>
-      <th scope="col">ID</th>
       <th scope="col">FACULTY ID</th>
       <th scope="col">FACULTY NAME</th>
-      <th scope="col">SUBJECT</th>
-      <th scope="col">GENDER</th>
-      <th scope="col">BRANCH</th>
-      <th scope="col">EMAIL</th>
-      <th scope="col">NUMBER</th>
-      <th scope="col">ADDRESS</th>
       <th scope="col">EDIT</th>
       <th scope="col">DELETE</th>
+      
 
     </tr>
   </thead>
@@ -44,16 +38,9 @@ Faculty Details
   {% for post in query %}
     <tr>
       <th scope="row">{{post.id}}</th>
-      <td>{{post.fid}}</td>
       <td>{{post.fname}}</td>
-      <td>{{post.subject}}</td>
-      <td>{{post.gender}}</td>
-      <td>{{post.branch}}</td>
-      <td>{{post.email}}</td>
-      <td>{{post.number}}</td>
-      <td>{{post.address}}</td>
-    <td><a href="/edit/{{post.id}}"><button class="btn btn-primary">Edit </button> </a> </td>
-    <td><a href="/delete/{{post.id}}"><button onclick="return confirm('Are you sure to Delete data');" class="btn btn-danger">Delete </button> </a> </td>
+    <td><a href="/editfac/{{post.id}}"><button class="btn btn-primary">Edit </button> </a> </td>
+    <td><a href="/deletefac/{{post.id}}"><button onclick="return confirm('Are you sure to Delete data');" class="btn btn-danger">Delete </button> </a> </td>
     </tr>
 {% endfor %}
   

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}
-Add Students
+Add Subject
 {% endblock title %}
 
 
 
 {% block body %}
- <h3 class="text-center"><span>Add Faculty Details</span> </h3>
+ <h3 class="text-center"><span>Add Subject Details</span> </h3>
   
 {% with messages=get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -28,22 +28,28 @@ Add Students
 <div class="col-md-4"></div>
 <div class="col-md-4">
 
-<form action="/addfaculty" method="post">
+<form action="/addsubject" method="post">
 <div class="form-group">
 
-<label for="id">Id</label>
-<input type="text" class="form-control" name="id" id="id">
+<label for="subid">Id</label>
+<input type="text" class="form-control" name="subid" id="subid">
 </div>
 <br>
 <div class="form-group">
 
-<label for="fname">Faculty Name</label>
-<input type="text" class="form-control" name="fname" id="fname">
+<label for="subname">Subject Name</label>
+<input type="text" class="form-control" name="subname" id="subname">
 </div>
 <br>
-<div class="form-group">
 
-
+<div class="form-group">                          
+    <select class="form-control" id="facid" name="facid"  required>
+            <option selected>Select Faculty id</option>
+            {% for d in dept  %}
+            <option value="{{d.id}}">{{d.id}}</option>
+            {% endfor %}
+          </select>
+</div>
 <br>
   
   <button type="submit" class="btn btn-danger btn-sm btn-block">Add Record</button>
